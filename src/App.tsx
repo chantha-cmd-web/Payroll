@@ -357,13 +357,24 @@ export default function App() {
                   type="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (loginId.trim().toLowerCase() === 'admin' && password.trim() === 'admin123') {
+                        setUser({ uid: 'admin_local', email: 'admin@system.local', displayName: 'System Administrator' } as any);
+                        setNeedsAuth(false);
+                        setLoginError('');
+                      } else {
+                        setLoginError('Invalid credentials');
+                      }
+                    }
+                  }}
                   className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium"
                   placeholder="Enter your password"
                 />
               </div>
               <button 
                 onClick={() => {
-                  if (loginId.trim() === 'admin' && password.trim() === 'admin123') {
+                  if (loginId.trim().toLowerCase() === 'admin' && password.trim() === 'admin123') {
                     setUser({ uid: 'admin_local', email: 'admin@system.local', displayName: 'System Administrator' } as any);
                     setNeedsAuth(false);
                     setLoginError('');
