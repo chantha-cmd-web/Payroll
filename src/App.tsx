@@ -294,7 +294,7 @@ export default function App() {
 
   if (!user && needsAuth) {
     return (
-      <div className="flex h-screen items-center justify-center relative bg-slate-50 text-slate-900 dark:bg-blue-950 dark:text-white dark:font-bold overflow-hidden font-sans text-lg md:text-xl">
+      <div className="flex h-screen items-center justify-center relative bg-slate-50 text-slate-900 dark:bg-[#000033] dark:text-white dark:font-bold overflow-hidden font-sans text-lg md:text-xl">
         {/* Dark mode background ambient glows */}
         {darkMode && (
           <>
@@ -335,7 +335,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen relative bg-slate-50 text-slate-900 dark:bg-blue-950 dark:text-white dark:font-bold min-h-screen overflow-hidden font-sans text-lg md:text-xl">
+    <div className="flex h-screen relative bg-slate-50 text-slate-900 dark:bg-[#000033] dark:text-white dark:font-bold min-h-screen overflow-hidden font-sans text-lg md:text-xl">
       {/* Dark mode background ambient glows */}
       {darkMode && (
         <>

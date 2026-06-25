@@ -131,24 +131,40 @@ export default function EmployeeMasterView({
         const wb = XLSX.read(bstr, { type: 'binary' });
         const wsname = wb.SheetNames[0];
         const ws = wb.Sheets[wsname];
-        const rawRows = XLSX.utils.sheet_to_json(ws, { defval: '' }) as any[];
+        const rawRows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[];
 
-        if (rawRows.length === 0) {
-          setImportError('The uploaded file must contain at least one data row.');
+        if (rawRows.length < 2) {
+          setImportError('The uploaded file must contain a header row and at least one data row.');
           return;
         }
 
+        // Find the header row (first row with at least 3 non-empty string cells)
+        let headerRowIdx = 0;
+        for (let i = 0; i < Math.min(rawRows.length, 10); i++) {
+          const stringCells = rawRows[i].filter((c: any) => typeof c === 'string' && c.trim().length > 0);
+          if (stringCells.length >= 3) {
+            headerRowIdx = i;
+            break;
+          }
+        }
+
+        const headers = rawRows[headerRowIdx].map((h: any) => String(h || '').trim().toLowerCase());
+        const dataRows = rawRows.slice(headerRowIdx + 1).filter(row => row && row.length > 0 && row.some((c: any) => c !== undefined && c !== ''));
+
         // Map column headers to Employee properties
-        const mappedData: Employee[] = rawRows.map((row, idx) => {
+        const mappedData: Employee[] = dataRows.map((row, idx) => {
           const getVal = (colNames: string[], defaultVal: any = '') => {
-            const keys = Object.keys(row);
-            for (const key of keys) {
-              const lowerKey = String(key).trim().toLowerCase();
-              for (const c of colNames) {
-                if (lowerKey.includes(c.toLowerCase())) {
-                  return row[key] !== undefined && row[key] !== '' ? row[key] : defaultVal;
-                }
-              }
+            const foundIdx = headers.findIndex((h: string) => {
+              return colNames.some(c => 
+                h === c || 
+                h.startsWith(c + ' ') || 
+                h.endsWith(' ' + c) || 
+                h.includes(' ' + c + ' ') || 
+                (h.includes(c) && c.length > 3)
+              );
+            });
+            if (foundIdx !== -1 && row[foundIdx] !== undefined && row[foundIdx] !== '') {
+              return row[foundIdx];
             }
             return defaultVal;
           };
