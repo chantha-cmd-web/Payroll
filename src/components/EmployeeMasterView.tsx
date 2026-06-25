@@ -762,6 +762,8 @@ export default function EmployeeMasterView({
                     <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Name</th>
                     <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Nationality</th>
                     <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Position</th>
+                    <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Department</th>
+                    <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Campus</th>
                     <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Basic ($)</th>
                     <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Allowance ($)</th>
                     <th className="p-3 border-b border-slate-200 dark:border-slate-700 font-semibold">Reliefs</th>
@@ -779,6 +781,8 @@ export default function EmployeeMasterView({
                         </span>
                       </td>
                       <td className="p-3">{row.pos}</td>
+                      <td className="p-3">{row.dept}</td>
+                      <td className="p-3">{row.campus}</td>
                       <td className="p-3 font-mono">${row.basic.toLocaleString()}</td>
                       <td className="p-3 font-mono">${row.allowance.toLocaleString()}</td>
                       <td className="p-3 text-slate-500">
