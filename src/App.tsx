@@ -61,8 +61,13 @@ export default function App() {
         setNeedsAuth(false);
       },
       () => {
-        setUser(null);
-        setNeedsAuth(true);
+        setUser((prevUser) => {
+          if (prevUser && prevUser.uid === 'admin_local') {
+            return prevUser; // Keep local admin
+          }
+          setTimeout(() => setNeedsAuth(true), 0);
+          return null;
+        });
       }
     );
     return () => unsubscribe();
@@ -71,18 +76,29 @@ export default function App() {
   // Sync to Firebase whenever user logs in
   useEffect(() => {
     if (user) {
-      const unsub = syncFirestore(
-        user.uid,
-        (syncedEmployees, syncedSettings) => {
-          if (syncedEmployees.length > 0) {
-            setEmployees(syncedEmployees);
-          }
-          if (syncedSettings) {
-            setSettings(syncedSettings);
-          }
-        },
-        (error) => console.error("Firebase sync error:", error)
-      );
+      // Skip Firestore sync for local admin to prevent permission denied errors
+      if (user.uid === 'admin_local') {
+        return;
+      }
+      
+      let unsub = () => {};
+      try {
+        unsub = syncFirestore(
+          user.uid,
+          (syncedEmployees, syncedSettings) => {
+            if (syncedEmployees.length > 0) {
+              setEmployees(syncedEmployees);
+            }
+            if (syncedSettings) {
+              setSettings(syncedSettings);
+            }
+          },
+          (error) => console.error("Firebase sync error:", error)
+        );
+      } catch (err) {
+        console.error("Failed to initialize Firebase sync:", err);
+      }
+      
       return () => unsub();
     }
   }, [user]);
@@ -95,7 +111,7 @@ export default function App() {
   // Callback to append a manually added employee
   const handleAddEmployee = async (newEmp: Employee) => {
     setEmployees((prev) => [...prev, newEmp]);
-    if (user) {
+    if (user && user.uid !== 'admin_local') {
       await saveEmployeeToFirestore(user.uid, newEmp);
     }
   };
@@ -105,7 +121,7 @@ export default function App() {
     setEmployees((prev) =>
       prev.map((emp) => (emp.id === updatedEmp.id ? updatedEmp : emp))
     );
-    if (user) {
+    if (user && user.uid !== 'admin_local') {
       await saveEmployeeToFirestore(user.uid, updatedEmp);
     }
   };
@@ -113,7 +129,7 @@ export default function App() {
   // Callback to delete an employee
   const handleDeleteEmployee = async (id: number) => {
     setEmployees((prev) => prev.filter((emp) => emp.id !== id));
-    if (user) {
+    if (user && user.uid !== 'admin_local') {
       await deleteEmployeeFromFirestore(user.uid, id);
     }
   };
@@ -132,7 +148,7 @@ export default function App() {
 
       return [...prev, ...newEmployees];
     });
-    if (user && newEmployees.length > 0) {
+    if (user && user.uid !== 'admin_local' && newEmployees.length > 0) {
       await saveAllEmployeesToFirestore(user.uid, newEmployees);
     }
   };
@@ -152,7 +168,7 @@ export default function App() {
         return emp;
       })
     );
-    if (user && updatedEmp) {
+    if (user && user.uid !== 'admin_local' && updatedEmp) {
       await saveEmployeeToFirestore(user.uid, updatedEmp);
     }
   };
@@ -160,7 +176,7 @@ export default function App() {
   // Callback for GDT setting updates
   const handleUpdateSettings = async (newSettings: SystemSettings) => {
     setSettings(newSettings);
-    if (user) {
+    if (user && user.uid !== 'admin_local') {
       await saveSettingsToFirestore(user.uid, newSettings);
     }
   };
@@ -347,7 +363,7 @@ export default function App() {
               </div>
               <button 
                 onClick={() => {
-                  if (loginId === 'admin' && password === 'admin123') {
+                  if (loginId.trim() === 'admin' && password.trim() === 'admin123') {
                     setUser({ uid: 'admin_local', email: 'admin@system.local', displayName: 'System Administrator' } as any);
                     setNeedsAuth(false);
                     setLoginError('');
