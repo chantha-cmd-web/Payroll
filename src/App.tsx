@@ -292,6 +292,10 @@ export default function App() {
     { id: 'settings', label: 'System Settings', icon: Settings }
   ];
 
+  const [loginId, setLoginId] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
   if (!user && needsAuth) {
     return (
       <div className="flex h-screen items-center justify-center relative bg-slate-50 text-slate-900 dark:bg-[#000033] dark:text-white dark:font-bold overflow-hidden font-sans text-lg md:text-xl">
@@ -303,21 +307,70 @@ export default function App() {
           </>
         )}
         
-        <div className="z-10 w-full max-w-md p-10 rounded-3xl border border-white/40 dark:border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-[20px] flex flex-col items-center space-y-8 animate-fade-in bg-white/40 dark:bg-[#000033]/40 relative overflow-hidden">
+        <div className="z-10 w-full max-w-md p-10 rounded-3xl border border-white/40 dark:border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-[20px] flex flex-col items-center space-y-6 animate-fade-in bg-white/40 dark:bg-[#000033]/40 relative overflow-hidden">
           {/* Subtle reflection overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent dark:from-white/5 pointer-events-none rounded-3xl"></div>
           
           <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-black text-4xl shadow-[0_0_40px_rgba(37,99,235,0.6)] transform hover:scale-105 transition-transform duration-500">
             W
           </div>
-          <div className="space-y-3 text-center relative z-10">
+          <div className="space-y-3 text-center relative z-10 w-full">
             <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-blue-200 drop-shadow-sm">Payroll Portal</h1>
-            <p className="text-sm text-slate-600 dark:text-blue-100/80 font-semibold tracking-wide">Secure access to your enterprise</p>
+            <p className="text-sm text-slate-600 dark:text-blue-100/80 font-semibold tracking-wide mb-4">Secure access to your enterprise</p>
+            
+            {loginError && (
+              <div className="text-sm text-red-500 bg-red-100 dark:bg-red-900/30 p-2 rounded-lg font-semibold animate-fade-in">
+                {loginError}
+              </div>
+            )}
+
+            <div className="space-y-4 w-full mt-4 text-left">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">User ID</label>
+                <input 
+                  type="text" 
+                  value={loginId}
+                  onChange={(e) => setLoginId(e.target.value)}
+                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium"
+                  placeholder="Enter your user ID"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                <input 
+                  type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium"
+                  placeholder="Enter your password"
+                />
+              </div>
+              <button 
+                onClick={() => {
+                  if (loginId === 'admin' && password === 'admin123') {
+                    setUser({ uid: 'admin_local', email: 'admin@system.local', displayName: 'System Administrator' } as any);
+                    setNeedsAuth(false);
+                    setLoginError('');
+                  } else {
+                    setLoginError('Invalid credentials');
+                  }
+                }}
+                className="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-brand-500/30"
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+          
+          <div className="relative flex items-center py-2 w-full z-10">
+            <div className="flex-grow border-t border-slate-300 dark:border-slate-700/50"></div>
+            <span className="flex-shrink-0 mx-4 text-slate-400 dark:text-slate-500 text-xs font-bold tracking-wider uppercase">OR</span>
+            <div className="flex-grow border-t border-slate-300 dark:border-slate-700/50"></div>
           </div>
           
           <button 
             onClick={handleGoogleLogin}
-            className="w-full relative overflow-hidden group bg-white/80 dark:bg-[#000044]/80 backdrop-blur-md text-slate-800 dark:text-white border border-white/50 dark:border-white/20 rounded-2xl px-6 py-4 flex items-center justify-center gap-4 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_16px_-4px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_20px_-4px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_12px_20px_-4px_rgba(0,0,0,0.7)] transition-all duration-300 transform hover:-translate-y-1"
+            className="w-full relative overflow-hidden group bg-white/80 dark:bg-[#000044]/80 backdrop-blur-md text-slate-800 dark:text-white border border-white/50 dark:border-white/20 rounded-2xl px-6 py-4 flex items-center justify-center gap-4 shadow-[0_8px_16px_-4px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_16px_-4px_rgba(0,0,0,0.5)] hover:shadow-[0_12px_20px_-4px_rgba(0,0,0,0.15)] dark:hover:shadow-[0_12px_20px_-4px_rgba(0,0,0,0.7)] transition-all duration-300 transform hover:-translate-y-1 z-10"
           >
             <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
             <svg className="w-7 h-7 flex-shrink-0 drop-shadow-sm relative z-10" viewBox="0 0 48 48">
