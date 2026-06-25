@@ -1,0 +1,6 @@
+{
+  "name": "Cambodia Payroll & Tax System",
+  "description": "GDT compliant payroll processing system with Excel import capability and automatic payroll calculations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
