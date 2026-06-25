@@ -31,14 +31,11 @@
   }
   
   html.dark body {
-    color: white !important;
-    font-weight: bold !important;
-    background-color: #000033 !important; /* dark blue */
+    color: white;
+    background-color: #000033; /* dark blue */
   }
 
   html.dark * {
-    color: white !important;
-    font-weight: bold !important;
     border-color: rgba(255, 255, 255, 0.2);
   }
 }

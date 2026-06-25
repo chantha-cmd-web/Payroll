@@ -331,28 +331,28 @@ export default function App() {
             W
           </div>
           <div className="space-y-3 text-center relative z-10 w-full">
-            <h1 className="text-3xl font-extrabold tracking-tight text-black dark:text-white drop-shadow-sm">Payroll Portal</h1>
-            <p className="text-sm text-black dark:text-blue-100/80 font-bold tracking-wide mb-4">Secure access to your enterprise</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-black drop-shadow-sm">Payroll Portal</h1>
+            <p className="text-sm text-black font-bold tracking-wide mb-4">Secure access to your enterprise</p>
             
             {loginError && (
-              <div className="text-sm text-red-500 bg-red-100 dark:bg-red-900/30 p-2 rounded-lg font-semibold animate-fade-in">
+              <div className="text-sm text-red-600 bg-red-100 p-2 rounded-lg font-bold animate-fade-in">
                 {loginError}
               </div>
             )}
 
             <div className="space-y-4 w-full mt-4 text-left">
               <div>
-                <label className="block text-sm font-bold text-black dark:text-slate-300 mb-1">User ID</label>
+                <label className="block text-sm font-bold text-black mb-1">User ID</label>
                 <input 
                   type="text" 
                   value={loginId}
                   onChange={(e) => setLoginId(e.target.value)}
-                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-black dark:text-white"
+                  className="w-full bg-white/50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-black placeholder-slate-500"
                   placeholder="Enter your user ID"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-black dark:text-slate-300 mb-1">Password</label>
+                <label className="block text-sm font-bold text-black mb-1">Password</label>
                 <input 
                   type="password" 
                   value={password}
@@ -368,7 +368,7 @@ export default function App() {
                       }
                     }
                   }}
-                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-black dark:text-white"
+                  className="w-full bg-white/50 border border-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-black placeholder-slate-500"
                   placeholder="Enter your password"
                 />
               </div>
@@ -493,7 +493,16 @@ export default function App() {
               <div className="w-7 h-7 rounded-full bg-brand-500/10 border border-brand-500/20 overflow-hidden flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold text-xs">
                 AD
               </div>
-              <span className="text-xs font-semibold hidden md:block">HR Administrator</span>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-semibold hidden md:block">HR Administrator</span>
+                <button onClick={async () => {
+                  try {
+                    await handleGoogleLogout();
+                  } catch (e) {}
+                  setUser(null);
+                  setNeedsAuth(true);
+                }} className="text-[10px] text-red-500 hover:text-red-600 text-left font-bold transition">Log out</button>
+              </div>
             </div>
           </div>
         </header>
