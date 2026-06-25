@@ -331,8 +331,8 @@ export default function App() {
             W
           </div>
           <div className="space-y-3 text-center relative z-10 w-full">
-            <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-blue-200 drop-shadow-sm">Payroll Portal</h1>
-            <p className="text-sm text-slate-600 dark:text-blue-100/80 font-semibold tracking-wide mb-4">Secure access to your enterprise</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-black dark:text-white drop-shadow-sm">Payroll Portal</h1>
+            <p className="text-sm text-black dark:text-blue-100/80 font-bold tracking-wide mb-4">Secure access to your enterprise</p>
             
             {loginError && (
               <div className="text-sm text-red-500 bg-red-100 dark:bg-red-900/30 p-2 rounded-lg font-semibold animate-fade-in">
@@ -342,17 +342,17 @@ export default function App() {
 
             <div className="space-y-4 w-full mt-4 text-left">
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">User ID</label>
+                <label className="block text-sm font-bold text-black dark:text-slate-300 mb-1">User ID</label>
                 <input 
                   type="text" 
                   value={loginId}
                   onChange={(e) => setLoginId(e.target.value)}
-                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium"
+                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-black dark:text-white"
                   placeholder="Enter your user ID"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Password</label>
+                <label className="block text-sm font-bold text-black dark:text-slate-300 mb-1">Password</label>
                 <input 
                   type="password" 
                   value={password}
@@ -368,7 +368,7 @@ export default function App() {
                       }
                     }
                   }}
-                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-medium"
+                  className="w-full bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-black dark:text-white"
                   placeholder="Enter your password"
                 />
               </div>
