@@ -131,22 +131,24 @@ export default function EmployeeMasterView({
         const wb = XLSX.read(bstr, { type: 'binary' });
         const wsname = wb.SheetNames[0];
         const ws = wb.Sheets[wsname];
-        const rawRows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[];
+        const rawRows = XLSX.utils.sheet_to_json(ws, { defval: '' }) as any[];
 
-        if (rawRows.length < 2) {
-          setImportError('The uploaded file must contain a header row and at least one data row.');
+        if (rawRows.length === 0) {
+          setImportError('The uploaded file must contain at least one data row.');
           return;
         }
 
-        const headers = rawRows[0].map((h: any) => String(h).trim().toLowerCase());
-        const dataRows = rawRows.slice(1);
-
         // Map column headers to Employee properties
-        const mappedData: Employee[] = dataRows.map((row, idx) => {
+        const mappedData: Employee[] = rawRows.map((row, idx) => {
           const getVal = (colNames: string[], defaultVal: any = '') => {
-            const foundIdx = headers.findIndex((h) => colNames.some((c) => h.includes(c)));
-            if (foundIdx !== -1 && row[foundIdx] !== undefined) {
-              return row[foundIdx];
+            const keys = Object.keys(row);
+            for (const key of keys) {
+              const lowerKey = String(key).trim().toLowerCase();
+              for (const c of colNames) {
+                if (lowerKey.includes(c.toLowerCase())) {
+                  return row[key] !== undefined && row[key] !== '' ? row[key] : defaultVal;
+                }
+              }
             }
             return defaultVal;
           };
@@ -393,7 +395,15 @@ export default function EmployeeMasterView({
 
                 {/* Name & Position */}
                 <h3 className="font-bold text-base tracking-tight">{emp.name}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{emp.pos} • {emp.dept}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{emp.pos}</p>
+                <div className="flex gap-2 mt-2">
+                  <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
+                    {emp.dept}
+                  </span>
+                  <span className="text-[10px] bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-500/20">
+                    {emp.campus}
+                  </span>
+                </div>
 
                 {/* Main figures */}
                 <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 grid grid-cols-2 gap-2 text-xs">
