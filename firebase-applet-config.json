@@ -3,6 +3,7 @@
   "appId": "1:212159877016:web:0751f6001447a4b77765ed",
   "apiKey": "AIzaSyDNYFeu0drNIXKsGnabiBtpYPEvgQyv30Q",
   "authDomain": "quiet-gift-drtgb.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-0555a7d5-1d1f-4dae-97cb-b488dbb04ca9",
   "storageBucket": "quiet-gift-drtgb.firebasestorage.app",
   "messagingSenderId": "212159877016",
   "measurementId": ""

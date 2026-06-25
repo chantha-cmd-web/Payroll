@@ -11,6 +11,8 @@ const firebaseConfig = {
   measurementId: ""
 };
 
+export const FIRESTORE_DATABASE_ID = "ai-studio-0555a7d5-1d1f-4dae-97cb-b488dbb04ca9";
+
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 

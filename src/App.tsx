@@ -14,6 +14,13 @@ import TaxExportView from './components/TaxExportView';
 import SettingsView from './components/SettingsView';
 import { initAuth, googleSignIn, logout, getAccessToken } from './utils/googleAuth';
 import { backupDataToDrive, restoreDataFromDrive } from './utils/googleDrive';
+import { 
+  syncFirestore, 
+  saveSettingsToFirestore, 
+  saveEmployeeToFirestore, 
+  deleteEmployeeFromFirestore,
+  saveAllEmployeesToFirestore
+} from './utils/firebaseSync';
 import { User } from 'firebase/auth';
 import { 
   LayoutDashboard, Users, Calculator, Receipt, DownloadCloud, 
@@ -38,8 +45,10 @@ export default function App() {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      // Adding larger text scale base for dark mode and bold text as requested
+      document.documentElement.classList.add('text-lg', 'font-bold');
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('dark', 'text-lg', 'font-bold');
     }
   }, [darkMode]);
 
@@ -58,61 +67,101 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Sync to Firebase whenever user logs in
+  useEffect(() => {
+    if (user) {
+      const unsub = syncFirestore(
+        user.uid,
+        (syncedEmployees, syncedSettings) => {
+          if (syncedEmployees.length > 0) {
+            setEmployees(syncedEmployees);
+          }
+          if (syncedSettings) {
+            setSettings(syncedSettings);
+          }
+        },
+        (error) => console.error("Firebase sync error:", error)
+      );
+      return () => unsub();
+    }
+  }, [user]);
+
   // Recalculated payroll results whenever employees list or settings change
   const processedData: PayrollResult[] = useMemo(() => {
     return employees.map((emp) => calculatePayroll(emp, settings));
   }, [employees, settings]);
 
   // Callback to append a manually added employee
-  const handleAddEmployee = (newEmp: Employee) => {
+  const handleAddEmployee = async (newEmp: Employee) => {
     setEmployees((prev) => [...prev, newEmp]);
+    if (user) {
+      await saveEmployeeToFirestore(user.uid, newEmp);
+    }
   };
 
   // Callback to update an edited employee
-  const handleUpdateEmployee = (updatedEmp: Employee) => {
+  const handleUpdateEmployee = async (updatedEmp: Employee) => {
     setEmployees((prev) =>
       prev.map((emp) => (emp.id === updatedEmp.id ? updatedEmp : emp))
     );
+    if (user) {
+      await saveEmployeeToFirestore(user.uid, updatedEmp);
+    }
   };
 
   // Callback to delete an employee
-  const handleDeleteEmployee = (id: number) => {
+  const handleDeleteEmployee = async (id: number) => {
     setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+    if (user) {
+      await deleteEmployeeFromFirestore(user.uid, id);
+    }
   };
 
   // Callback to append multiple employees from Excel
-  const handleImportEmployees = (imported: Employee[]) => {
+  const handleImportEmployees = async (imported: Employee[]) => {
+    let newEmployees: Employee[] = [];
     setEmployees((prev) => {
       // Find the maximum current numerical ID to continue numbering
       const maxId = prev.length > 0 ? Math.max(...prev.map((e) => e.id)) : 0;
       
-      const newEmployees = imported.map((emp, idx) => ({
+      newEmployees = imported.map((emp, idx) => ({
         ...emp,
         id: maxId + idx + 1,
       }));
 
       return [...prev, ...newEmployees];
     });
+    if (user && newEmployees.length > 0) {
+      await saveAllEmployeesToFirestore(user.uid, newEmployees);
+    }
   };
 
   // Callback for inline sheet cell changes
-  const handleUpdateValue = (id: number, key: string, value: any) => {
+  const handleUpdateValue = async (id: number, key: string, value: any) => {
+    let updatedEmp: Employee | null = null;
     setEmployees((prev) =>
       prev.map((emp) => {
         if (emp.id === id) {
-          return {
+          updatedEmp = {
             ...emp,
             [key]: value,
           };
+          return updatedEmp;
         }
         return emp;
       })
     );
+    if (user && updatedEmp) {
+      await saveEmployeeToFirestore(user.uid, updatedEmp);
+    }
   };
 
   // Callback for GDT setting updates
-  const handleUpdateSettings = (newSettings: SystemSettings) => {
+  const handleUpdateSettings = async (newSettings: SystemSettings) => {
     setSettings(newSettings);
+    if (user) {
+      await saveSettingsToFirestore(user.uid, newSettings);
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -236,7 +285,7 @@ export default function App() {
   ];
 
   return (
-    <div className="flex h-screen relative bg-slate-50 text-slate-900 dark:bg-[#0B0F19] dark:text-slate-100 min-h-screen overflow-hidden font-sans">
+    <div className="flex h-screen relative bg-slate-50 text-slate-900 dark:bg-blue-950 dark:text-white dark:font-bold min-h-screen overflow-hidden font-sans text-lg md:text-xl">
       {/* Dark mode background ambient glows */}
       {darkMode && (
         <>

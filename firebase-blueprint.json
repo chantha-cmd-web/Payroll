@@ -1,0 +1,54 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "documents": [
+        {
+          "id": "USER_ID",
+          "fields": [
+            { "name": "exchangeRate", "type": "number" },
+            { "name": "spouseReliefKHR", "type": "number" },
+            { "name": "childReliefKHR", "type": "number" }
+          ],
+          "collections": [
+            {
+              "name": "employees",
+              "documents": [
+                {
+                  "id": "EMPLOYEE_ID",
+                  "fields": [
+                    { "name": "staffId", "type": "string" },
+                    { "name": "name", "type": "string" },
+                    { "name": "nat", "type": "string" },
+                    { "name": "pos", "type": "string" },
+                    { "name": "dept", "type": "string" },
+                    { "name": "campus", "type": "string" },
+                    { "name": "doj", "type": "string" },
+                    { "name": "empDate", "type": "string" },
+                    { "name": "basic", "type": "number" },
+                    { "name": "prePayPct", "type": "number" },
+                    { "name": "absence", "type": "number" },
+                    { "name": "maternity", "type": "number" },
+                    { "name": "ot", "type": "number" },
+                    { "name": "caAdd", "type": "number" },
+                    { "name": "caDed", "type": "number" },
+                    { "name": "nssf", "type": "number" },
+                    { "name": "seniority", "type": "number" },
+                    { "name": "spouse", "type": "boolean" },
+                    { "name": "kids", "type": "number" },
+                    { "name": "allowance", "type": "number" },
+                    { "name": "sdReturn", "type": "number" },
+                    { "name": "provFund", "type": "number" },
+                    { "name": "bankAcc", "type": "string" },
+                    { "name": "email", "type": "string" },
+                    { "name": "remarks", "type": "string" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
